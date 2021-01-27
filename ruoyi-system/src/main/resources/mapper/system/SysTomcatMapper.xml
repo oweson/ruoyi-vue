@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysTomcatMapper">
+    
+    <resultMap type="SysTomcat" id="SysTomcatResult">
+        <result property="id"    column="id"    />
+        <result property="code"    column="code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysTomcatVo">
+        select id, code, create_time, update_time from sys_tomcat
+    </sql>
+
+    <select id="selectSysTomcatList" parameterType="SysTomcat" resultMap="SysTomcatResult">
+        <include refid="selectSysTomcatVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code like concat('%', #{code}, '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+            <if test="params.beginUpdateTime != null and params.beginUpdateTime != '' and params.endUpdateTime != null and params.endUpdateTime != ''"> and update_time between #{params.beginUpdateTime} and #{params.endUpdateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysTomcatById" parameterType="Integer" resultMap="SysTomcatResult">
+        <include refid="selectSysTomcatVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysTomcat" parameterType="SysTomcat" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_tomcat
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null">code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null">#{code},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysTomcat" parameterType="SysTomcat">
+        update sys_tomcat
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null">code = #{code},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysTomcatById" parameterType="Integer">
+        delete from sys_tomcat where id = #{id}
+    </delete>
+
+    <delete id="deleteSysTomcatByIds" parameterType="String">
+        delete from sys_tomcat where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
