@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PublicIdiomMapper">
+    
+    <resultMap type="PublicIdiom" id="PublicIdiomResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="spell"    column="spell"    />
+        <result property="content"    column="content"    />
+        <result property="derivation"    column="derivation"    />
+        <result property="samples"    column="samples"    />
+    </resultMap>
+
+    <sql id="selectPublicIdiomVo">
+        select id, name, spell, content, derivation, samples from public_idiom
+    </sql>
+
+    <select id="selectPublicIdiomList" parameterType="PublicIdiom" resultMap="PublicIdiomResult">
+        <include refid="selectPublicIdiomVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="spell != null  and spell != ''"> and spell like concat('%', #{spell}, '%')</if>
+            <if test="content != null  and content != ''"> and content like concat('%', #{content}, '%')</if>
+            <if test="derivation != null  and derivation != ''"> and derivation like concat('%', #{derivation}, '%')</if>
+            <if test="samples != null  and samples != ''"> and samples like concat('%', #{samples}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPublicIdiomById" parameterType="Long" resultMap="PublicIdiomResult">
+        <include refid="selectPublicIdiomVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPublicIdiom" parameterType="PublicIdiom" useGeneratedKeys="true" keyProperty="id">
+        insert into public_idiom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="spell != null">spell,</if>
+            <if test="content != null">content,</if>
+            <if test="derivation != null">derivation,</if>
+            <if test="samples != null">samples,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="spell != null">#{spell},</if>
+            <if test="content != null">#{content},</if>
+            <if test="derivation != null">#{derivation},</if>
+            <if test="samples != null">#{samples},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePublicIdiom" parameterType="PublicIdiom">
+        update public_idiom
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="spell != null">spell = #{spell},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="derivation != null">derivation = #{derivation},</if>
+            <if test="samples != null">samples = #{samples},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePublicIdiomById" parameterType="Long">
+        delete from public_idiom where id = #{id}
+    </delete>
+
+    <delete id="deletePublicIdiomByIds" parameterType="String">
+        delete from public_idiom where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

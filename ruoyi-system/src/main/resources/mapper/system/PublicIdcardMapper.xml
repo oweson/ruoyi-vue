@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PublicIdcardMapper">
+    
+    <resultMap type="PublicIdcard" id="PublicIdcardResult">
+        <result property="fCode"    column="f_code"    />
+        <result property="fProvince"    column="f_province"    />
+        <result property="fCity"    column="f_city"    />
+        <result property="fArea"    column="f_area"    />
+    </resultMap>
+
+    <sql id="selectPublicIdcardVo">
+        select f_code, f_province, f_city, f_area from public_idcard
+    </sql>
+
+    <select id="selectPublicIdcardList" parameterType="PublicIdcard" resultMap="PublicIdcardResult">
+        <include refid="selectPublicIdcardVo"/>
+        <where>  
+            <if test="fProvince != null  and fProvince != ''"> and f_province like concat('%', #{fProvince}, '%')</if>
+            <if test="fCity != null  and fCity != ''"> and f_city like concat('%', #{fCity}, '%')</if>
+            <if test="fArea != null  and fArea != ''"> and f_area like concat('%', #{fArea}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPublicIdcardById" parameterType="Integer" resultMap="PublicIdcardResult">
+        <include refid="selectPublicIdcardVo"/>
+        where f_code = #{fCode}
+    </select>
+        
+    <insert id="insertPublicIdcard" parameterType="PublicIdcard">
+        insert into public_idcard
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fCode != null">f_code,</if>
+            <if test="fProvince != null">f_province,</if>
+            <if test="fCity != null">f_city,</if>
+            <if test="fArea != null">f_area,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fCode != null">#{fCode},</if>
+            <if test="fProvince != null">#{fProvince},</if>
+            <if test="fCity != null">#{fCity},</if>
+            <if test="fArea != null">#{fArea},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePublicIdcard" parameterType="PublicIdcard">
+        update public_idcard
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fProvince != null">f_province = #{fProvince},</if>
+            <if test="fCity != null">f_city = #{fCity},</if>
+            <if test="fArea != null">f_area = #{fArea},</if>
+        </trim>
+        where f_code = #{fCode}
+    </update>
+
+    <delete id="deletePublicIdcardById" parameterType="Integer">
+        delete from public_idcard where f_code = #{fCode}
+    </delete>
+
+    <delete id="deletePublicIdcardByIds" parameterType="String">
+        delete from public_idcard where f_code in 
+        <foreach item="fCode" collection="array" open="(" separator="," close=")">
+            #{fCode}
+        </foreach>
+    </delete>
+</mapper>

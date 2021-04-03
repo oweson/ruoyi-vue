@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PublicEnglishwordsMapper">
+    
+    <resultMap type="PublicEnglishwords" id="PublicEnglishwordsResult">
+        <result property="id"    column="id"    />
+        <result property="word"    column="word"    />
+        <result property="englishPronunciation"    column="english_pronunciation"    />
+        <result property="americaPronunciation"    column="america_pronunciation"    />
+        <result property="meaning"    column="meaning"    />
+    </resultMap>
+
+    <sql id="selectPublicEnglishwordsVo">
+        select id, word, english_pronunciation, america_pronunciation, meaning from public_englishwords
+    </sql>
+
+    <select id="selectPublicEnglishwordsList" parameterType="PublicEnglishwords" resultMap="PublicEnglishwordsResult">
+        <include refid="selectPublicEnglishwordsVo"/>
+        <where>  
+            <if test="word != null  and word != ''"> and word like concat('%', #{word}, '%')</if>
+            <if test="englishPronunciation != null  and englishPronunciation != ''"> and english_pronunciation like concat('%', #{englishPronunciation}, '%')</if>
+            <if test="americaPronunciation != null  and americaPronunciation != ''"> and america_pronunciation like concat('%', #{americaPronunciation}, '%')</if>
+            <if test="meaning != null  and meaning != ''"> and meaning like concat('%', #{meaning}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPublicEnglishwordsById" parameterType="Integer" resultMap="PublicEnglishwordsResult">
+        <include refid="selectPublicEnglishwordsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPublicEnglishwords" parameterType="PublicEnglishwords" useGeneratedKeys="true" keyProperty="id">
+        insert into public_englishwords
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="word != null and word != ''">word,</if>
+            <if test="englishPronunciation != null and englishPronunciation != ''">english_pronunciation,</if>
+            <if test="americaPronunciation != null and americaPronunciation != ''">america_pronunciation,</if>
+            <if test="meaning != null and meaning != ''">meaning,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="word != null and word != ''">#{word},</if>
+            <if test="englishPronunciation != null and englishPronunciation != ''">#{englishPronunciation},</if>
+            <if test="americaPronunciation != null and americaPronunciation != ''">#{americaPronunciation},</if>
+            <if test="meaning != null and meaning != ''">#{meaning},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePublicEnglishwords" parameterType="PublicEnglishwords">
+        update public_englishwords
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="word != null and word != ''">word = #{word},</if>
+            <if test="englishPronunciation != null and englishPronunciation != ''">english_pronunciation = #{englishPronunciation},</if>
+            <if test="americaPronunciation != null and americaPronunciation != ''">america_pronunciation = #{americaPronunciation},</if>
+            <if test="meaning != null and meaning != ''">meaning = #{meaning},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePublicEnglishwordsById" parameterType="Integer">
+        delete from public_englishwords where id = #{id}
+    </delete>
+
+    <delete id="deletePublicEnglishwordsByIds" parameterType="String">
+        delete from public_englishwords where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

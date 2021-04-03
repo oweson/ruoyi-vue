@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PublicBasWordMapper">
+    
+    <resultMap type="PublicBasWord" id="PublicBasWordResult">
+        <result property="id"    column="id"    />
+        <result property="word"    column="word"    />
+        <result property="oldword"    column="oldword"    />
+        <result property="pinyin"    column="pinyin"    />
+        <result property="radicals"    column="radicals"    />
+        <result property="strokes"    column="strokes"    />
+        <result property="explanation"    column="explanation"    />
+        <result property="more"    column="more"    />
+        <result property="addUserId"    column="add_user_id"    />
+    </resultMap>
+
+    <sql id="selectPublicBasWordVo">
+        select id, word, oldword, pinyin, radicals, strokes, explanation, more, add_user_id from public_bas_word
+    </sql>
+
+    <select id="selectPublicBasWordList" parameterType="PublicBasWord" resultMap="PublicBasWordResult">
+        <include refid="selectPublicBasWordVo"/>
+        <where>  
+            <if test="word != null  and word != ''"> and word like concat('%', #{word}, '%')</if>
+            <if test="oldword != null  and oldword != ''"> and oldword = #{oldword}</if>
+            <if test="pinyin != null  and pinyin != ''"> and pinyin like concat('%', #{pinyin}, '%')</if>
+            <if test="radicals != null  and radicals != ''"> and radicals like concat('%', #{radicals}, '%')</if>
+            <if test="explanation != null  and explanation != ''"> and explanation like concat('%', #{explanation}, '%')</if>
+            <if test="more != null  and more != ''"> and more like concat('%', #{more}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPublicBasWordById" parameterType="Long" resultMap="PublicBasWordResult">
+        <include refid="selectPublicBasWordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPublicBasWord" parameterType="PublicBasWord" useGeneratedKeys="true" keyProperty="id">
+        insert into public_bas_word
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="word != null">word,</if>
+            <if test="oldword != null">oldword,</if>
+            <if test="pinyin != null">pinyin,</if>
+            <if test="radicals != null">radicals,</if>
+            <if test="strokes != null">strokes,</if>
+            <if test="explanation != null">explanation,</if>
+            <if test="more != null">more,</if>
+            <if test="addUserId != null">add_user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="word != null">#{word},</if>
+            <if test="oldword != null">#{oldword},</if>
+            <if test="pinyin != null">#{pinyin},</if>
+            <if test="radicals != null">#{radicals},</if>
+            <if test="strokes != null">#{strokes},</if>
+            <if test="explanation != null">#{explanation},</if>
+            <if test="more != null">#{more},</if>
+            <if test="addUserId != null">#{addUserId},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePublicBasWord" parameterType="PublicBasWord">
+        update public_bas_word
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="word != null">word = #{word},</if>
+            <if test="oldword != null">oldword = #{oldword},</if>
+            <if test="pinyin != null">pinyin = #{pinyin},</if>
+            <if test="radicals != null">radicals = #{radicals},</if>
+            <if test="strokes != null">strokes = #{strokes},</if>
+            <if test="explanation != null">explanation = #{explanation},</if>
+            <if test="more != null">more = #{more},</if>
+            <if test="addUserId != null">add_user_id = #{addUserId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePublicBasWordById" parameterType="Long">
+        delete from public_bas_word where id = #{id}
+    </delete>
+
+    <delete id="deletePublicBasWordByIds" parameterType="String">
+        delete from public_bas_word where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

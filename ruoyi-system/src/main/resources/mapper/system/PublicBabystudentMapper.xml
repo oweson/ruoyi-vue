@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PublicBabystudentMapper">
+    
+    <resultMap type="PublicBabystudent" id="PublicBabystudentResult">
+        <result property="id"    column="id"    />
+        <result property="alostudentid"    column="aloStudentId"    />
+        <result property="studentuserid"    column="studentUserId"    />
+        <result property="createtime"    column="createTime"    />
+        <result property="alostudentphone"    column="aloStudentPhone"    />
+        <result property="companyid"    column="companyId"    />
+        <result property="campusid"    column="campusId"    />
+        <result property="chinesename"    column="chineseName"    />
+        <result property="englishname"    column="englishName"    />
+    </resultMap>
+
+    <sql id="selectPublicBabystudentVo">
+        select id, aloStudentId, studentUserId, createTime, aloStudentPhone, companyId, campusId, chineseName, englishName from public_babystudent
+    </sql>
+
+    <select id="selectPublicBabystudentList" parameterType="PublicBabystudent" resultMap="PublicBabystudentResult">
+        <include refid="selectPublicBabystudentVo"/>
+        <where>  
+            <if test="alostudentid != null  and alostudentid != ''"> and aloStudentId = #{alostudentid}</if>
+            <if test="studentuserid != null "> and studentUserId = #{studentuserid}</if>
+            <if test="params.beginCreatetime != null and params.beginCreatetime != '' and params.endCreatetime != null and params.endCreatetime != ''"> and createTime between #{params.beginCreatetime} and #{params.endCreatetime}</if>
+            <if test="alostudentphone != null  and alostudentphone != ''"> and aloStudentPhone like concat('%', #{alostudentphone}, '%')</if>
+            <if test="campusid != null "> and campusId = #{campusid}</if>
+            <if test="chinesename != null  and chinesename != ''"> and chineseName like concat('%', #{chinesename}, '%')</if>
+            <if test="englishname != null  and englishname != ''"> and englishName like concat('%', #{englishname}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPublicBabystudentById" parameterType="String" resultMap="PublicBabystudentResult">
+        <include refid="selectPublicBabystudentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPublicBabystudent" parameterType="PublicBabystudent">
+        insert into public_babystudent
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="alostudentid != null">aloStudentId,</if>
+            <if test="studentuserid != null">studentUserId,</if>
+            <if test="createtime != null">createTime,</if>
+            <if test="alostudentphone != null">aloStudentPhone,</if>
+            <if test="companyid != null">companyId,</if>
+            <if test="campusid != null">campusId,</if>
+            <if test="chinesename != null">chineseName,</if>
+            <if test="englishname != null">englishName,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="alostudentid != null">#{alostudentid},</if>
+            <if test="studentuserid != null">#{studentuserid},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="alostudentphone != null">#{alostudentphone},</if>
+            <if test="companyid != null">#{companyid},</if>
+            <if test="campusid != null">#{campusid},</if>
+            <if test="chinesename != null">#{chinesename},</if>
+            <if test="englishname != null">#{englishname},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePublicBabystudent" parameterType="PublicBabystudent">
+        update public_babystudent
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="alostudentid != null">aloStudentId = #{alostudentid},</if>
+            <if test="studentuserid != null">studentUserId = #{studentuserid},</if>
+            <if test="createtime != null">createTime = #{createtime},</if>
+            <if test="alostudentphone != null">aloStudentPhone = #{alostudentphone},</if>
+            <if test="companyid != null">companyId = #{companyid},</if>
+            <if test="campusid != null">campusId = #{campusid},</if>
+            <if test="chinesename != null">chineseName = #{chinesename},</if>
+            <if test="englishname != null">englishName = #{englishname},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePublicBabystudentById" parameterType="String">
+        delete from public_babystudent where id = #{id}
+    </delete>
+
+    <delete id="deletePublicBabystudentByIds" parameterType="String">
+        delete from public_babystudent where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

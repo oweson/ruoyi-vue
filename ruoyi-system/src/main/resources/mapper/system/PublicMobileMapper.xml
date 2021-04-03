@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PublicMobileMapper">
+    
+    <resultMap type="PublicMobile" id="PublicMobileResult">
+        <result property="id"    column="id"    />
+        <result property="phone"    column="phone"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="serviceProvider"    column="service_provider"    />
+        <result property="cityCode"    column="city_code"    />
+        <result property="postcode"    column="postcode"    />
+    </resultMap>
+
+    <sql id="selectPublicMobileVo">
+        select id, phone, province, city, service_provider, city_code, postcode from public_mobile
+    </sql>
+
+    <select id="selectPublicMobileList" parameterType="PublicMobile" resultMap="PublicMobileResult">
+        <include refid="selectPublicMobileVo"/>
+        <where>  
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="serviceProvider != null  and serviceProvider != ''"> and service_provider = #{serviceProvider}</if>
+            <if test="cityCode != null  and cityCode != ''"> and city_code like concat('%', #{cityCode}, '%')</if>
+            <if test="postcode != null  and postcode != ''"> and postcode = #{postcode}</if>
+        </where>
+    </select>
+    
+    <select id="selectPublicMobileById" parameterType="Integer" resultMap="PublicMobileResult">
+        <include refid="selectPublicMobileVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPublicMobile" parameterType="PublicMobile" useGeneratedKeys="true" keyProperty="id">
+        insert into public_mobile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="province != null and province != ''">province,</if>
+            <if test="city != null and city != ''">city,</if>
+            <if test="serviceProvider != null and serviceProvider != ''">service_provider,</if>
+            <if test="cityCode != null and cityCode != ''">city_code,</if>
+            <if test="postcode != null and postcode != ''">postcode,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="province != null and province != ''">#{province},</if>
+            <if test="city != null and city != ''">#{city},</if>
+            <if test="serviceProvider != null and serviceProvider != ''">#{serviceProvider},</if>
+            <if test="cityCode != null and cityCode != ''">#{cityCode},</if>
+            <if test="postcode != null and postcode != ''">#{postcode},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePublicMobile" parameterType="PublicMobile">
+        update public_mobile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="province != null and province != ''">province = #{province},</if>
+            <if test="city != null and city != ''">city = #{city},</if>
+            <if test="serviceProvider != null and serviceProvider != ''">service_provider = #{serviceProvider},</if>
+            <if test="cityCode != null and cityCode != ''">city_code = #{cityCode},</if>
+            <if test="postcode != null and postcode != ''">postcode = #{postcode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePublicMobileById" parameterType="Integer">
+        delete from public_mobile where id = #{id}
+    </delete>
+
+    <delete id="deletePublicMobileByIds" parameterType="String">
+        delete from public_mobile where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
