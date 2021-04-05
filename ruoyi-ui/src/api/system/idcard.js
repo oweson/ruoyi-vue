@@ -50,4 +50,6 @@ export function exportIdcard(query) {
     method: 'get',
     params: query
   })
+
+
 }

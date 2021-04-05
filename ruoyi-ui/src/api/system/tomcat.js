@@ -49,5 +49,14 @@ export function exportTomcat(query) {
     url: '/system/tomcat/export',
     method: 'get',
     params: query
-  })
+  })}
+
+  // 下载用户导入模板
+  export function importTemplate() {
+    return request({
+      url: '/system/tomcat/importTemplate',
+      method: 'get'
+    })
+  
+
 }
