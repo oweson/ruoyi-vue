@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PrivateMobileManagephoneMapper">
+    
+    <resultMap type="PrivateMobileManagephone" id="PrivateMobileManagephoneResult">
+        <result property="id"    column="id"    />
+        <result property="chineseName"    column="chinese_name"    />
+        <result property="phone"    column="phone"    />
+        <result property="type"    column="type"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectPrivateMobileManagephoneVo">
+        select id, chinese_name, phone, type, remark, create_time, update_time from private_mobile_managephone
+    </sql>
+
+    <select id="selectPrivateMobileManagephoneList" parameterType="PrivateMobileManagephone" resultMap="PrivateMobileManagephoneResult">
+        <include refid="selectPrivateMobileManagephoneVo"/>
+        <where>  
+            <if test="chineseName != null  and chineseName != ''"> and chinese_name like concat('%', #{chineseName}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectPrivateMobileManagephoneById" parameterType="Integer" resultMap="PrivateMobileManagephoneResult">
+        <include refid="selectPrivateMobileManagephoneVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPrivateMobileManagephone" parameterType="PrivateMobileManagephone" useGeneratedKeys="true" keyProperty="id">
+        insert into private_mobile_managephone
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="chineseName != null">chinese_name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="type != null">type,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="chineseName != null">#{chineseName},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="type != null">#{type},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePrivateMobileManagephone" parameterType="PrivateMobileManagephone">
+        update private_mobile_managephone
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="chineseName != null">chinese_name = #{chineseName},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePrivateMobileManagephoneById" parameterType="Integer">
+        delete from private_mobile_managephone where id = #{id}
+    </delete>
+
+    <delete id="deletePrivateMobileManagephoneByIds" parameterType="String">
+        delete from private_mobile_managephone where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
