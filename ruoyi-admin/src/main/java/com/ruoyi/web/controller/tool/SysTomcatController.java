@@ -63,7 +63,7 @@ public class SysTomcatController extends BaseController
     public AjaxResult importTemplate()
     {
         ExcelUtil<SysTomcat> util = new ExcelUtil<SysTomcat>(SysTomcat.class);
-        return util.importTemplateExcel("用户数据");
+        return util.importTemplateExcel("测试数据！");
     }
 
 
