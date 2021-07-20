@@ -9,5 +9,6 @@ package demo;
 public class HelloRuoYi {
     public static void main(String[] args) {
         System.out.println("前后端分离是大趋势！");
+        
     }
 }
