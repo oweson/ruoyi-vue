@@ -3,8 +3,8 @@ package com.ruoyi.system.service.impl;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.redis.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.PrivateMobileManagephoneMapper;
@@ -21,8 +21,9 @@ import com.ruoyi.system.service.IPrivateMobileManagephoneService;
 public class PrivateMobileManagephoneServiceImpl implements IPrivateMobileManagephoneService {
     @Autowired
     private PrivateMobileManagephoneMapper privateMobileManagephoneMapper;
+
     @Autowired
-    RedisUtil redisUtil;
+    RedisCache redisUtil;
 
     /**
      * 查询手机号码
@@ -33,10 +34,10 @@ public class PrivateMobileManagephoneServiceImpl implements IPrivateMobileManage
     @Override
     public PrivateMobileManagephone selectPrivateMobileManagephoneById(Integer id) {
         PrivateMobileManagephone managephone = null;
-        String phone = (String)redisUtil.get(id + "");
+        String phone = (String)redisUtil.getCacheObject(id + "");
         if (phone == null) {
             managephone = privateMobileManagephoneMapper.selectPrivateMobileManagephoneById(id);
-            redisUtil.set(id+"", JSON.toJSONString(managephone,true));
+            redisUtil.setCacheObject(id+"", JSON.toJSONString(managephone,true));
         } else {
          managephone=  JSON.parseObject(phone,PrivateMobileManagephone.class);
         }
