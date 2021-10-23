@@ -2,6 +2,9 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.PublicBasWordMapper;
 import com.ruoyi.system.domain.PublicBasWord;
@@ -14,6 +17,7 @@ import com.ruoyi.system.service.IPublicBasWordService;
  * @date 2021-04-03
  */
 @Service
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PublicBasWordServiceImpl implements IPublicBasWordService 
 {
     @Autowired
