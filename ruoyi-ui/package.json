@@ -1,6 +1,6 @@
 {
   "name": "ruoyi",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "description": "若依管理系统",
   "author": "若依",
   "license": "MIT",
@@ -68,6 +68,7 @@
     "babel-plugin-dynamic-import-node": "2.3.3",
     "babel-plugin-syntax-jsx": "^6.18.0",
     "chalk": "4.1.0",
+    "compression-webpack-plugin": "5.0.2",
     "connect": "3.6.6",
     "eslint": "7.15.0",
     "eslint-plugin-vue": "7.2.0",
