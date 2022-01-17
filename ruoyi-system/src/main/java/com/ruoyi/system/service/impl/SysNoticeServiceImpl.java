@@ -1,6 +1,8 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.annotation.DataScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.domain.SysNotice;
@@ -37,6 +39,7 @@ public class SysNoticeServiceImpl implements ISysNoticeService
      * @return 公告集合
      */
     @Override
+    @DataScope(userAlias = "u")
     public List<SysNotice> selectNoticeList(SysNotice notice)
     {
         return noticeMapper.selectNoticeList(notice);

@@ -26,20 +26,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectNoticeVo"/>
         where notice_id = #{noticeId}
     </select>
-    
+    <!--        <include refid="selectNoticeVo"/>-->
+
     <select id="selectNoticeList" parameterType="SysNotice" resultMap="SysNoticeResult">
-        <include refid="selectNoticeVo"/>
-        <where>
+
+        SELECT
+        notice_id,
+        notice_title,
+        notice_type,
+        cast( notice_content AS CHAR ) AS notice_content,
+        s.STATUS,
+        s.create_by,
+        s.create_time,
+        s.update_by,
+        s.update_time,
+        s.remark
+        FROM
+        sys_notice s
+        LEFT JOIN sys_user u
+        ON u.user_name = s.create_by
+        WHERE
+        1 =1
 			<if test="noticeTitle != null and noticeTitle != ''">
-				AND notice_title like concat('%', #{noticeTitle}, '%')
+				AND s.notice_title like concat('%', #{noticeTitle}, '%')
 			</if>
 			<if test="noticeType != null and noticeType != ''">
-				AND notice_type = #{noticeType}
+				AND s.notice_type = #{noticeType}
 			</if>
 			<if test="createBy != null and createBy != ''">
-				AND create_by like concat('%', #{createBy}, '%')
+				AND s.create_by like concat('%', #{createBy}, '%')
 			</if>
-		</where>
+
+        ${params.dataScope}
     </select>
     
     <insert id="insertNotice" parameterType="SysNotice">
