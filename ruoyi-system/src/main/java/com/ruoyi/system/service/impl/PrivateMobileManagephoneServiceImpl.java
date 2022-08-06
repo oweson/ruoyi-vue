@@ -1,15 +1,16 @@
 package com.ruoyi.system.service.impl;
 
-import java.util.List;
-
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.PrivateMobileManagephone;
+import com.ruoyi.system.mapper.PrivateMobileManagephoneMapper;
+import com.ruoyi.system.service.IPrivateMobileManagephoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.system.mapper.PrivateMobileManagephoneMapper;
-import com.ruoyi.system.domain.PrivateMobileManagephone;
-import com.ruoyi.system.service.IPrivateMobileManagephoneService;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 手机号码Service业务层处理
@@ -19,7 +20,7 @@ import com.ruoyi.system.service.IPrivateMobileManagephoneService;
  */
 @Service
 public class PrivateMobileManagephoneServiceImpl implements IPrivateMobileManagephoneService {
-    @Autowired
+    @Resource
     private PrivateMobileManagephoneMapper privateMobileManagephoneMapper;
 
     @Autowired
@@ -37,7 +38,7 @@ public class PrivateMobileManagephoneServiceImpl implements IPrivateMobileManage
         String phone = (String)redisUtil.getCacheObject(id + "");
         if (phone == null) {
             managephone = privateMobileManagephoneMapper.selectPrivateMobileManagephoneById(id);
-            redisUtil.setCacheObject(id+"", JSON.toJSONString(managephone,true));
+            redisUtil.setCacheObject(id+"", managephone);
         } else {
          managephone=  JSON.parseObject(phone,PrivateMobileManagephone.class);
         }

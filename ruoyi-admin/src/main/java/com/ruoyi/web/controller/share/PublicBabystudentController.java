@@ -1,24 +1,20 @@
 package com.ruoyi.web.controller.share;
 
-import java.util.List;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.PublicBabystudent;
 import com.ruoyi.system.service.IPublicBabystudentService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * baby名字Controller
@@ -40,6 +36,8 @@ public class PublicBabystudentController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(PublicBabystudent publicBabystudent)
     {
+        HttpServletRequest request = ServletUtils.getRequest();
+        String appDevice = request.getHeader("app_device");
         startPage();
         List<PublicBabystudent> list = publicBabystudentService.selectPublicBabystudentList(publicBabystudent);
         return getDataTable(list);
