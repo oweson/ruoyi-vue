@@ -1,4 +1,4 @@
-package com.ruoyi.common.config;
+package com.ruoyi.common.config.simple;
 
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Qualifier;

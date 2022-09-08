@@ -1,12 +1,21 @@
 package mq.rabbitmq;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SpringAmqpTest {
@@ -14,78 +23,105 @@ public class SpringAmqpTest {
     private RabbitTemplate rabbitTemplate;
 
     @Test
-    public void testSendMessage2SimpleQueue() {
-        String queueName = "simple.queue";
+    public void testSendMessage2SimpleQueue() throws InterruptedException {
+        // 1.准备消息
         String message = "hello, spring amqp!";
-        rabbitTemplate.convertAndSend(queueName, message);
+        // 2.准备CorrelationData
+        // 2.1.消息ID
+
+        CorrelationData data = new CorrelationData(UUID.randomUUID().toString());
+        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+        // 2.2.准备ConfirmCallback
+        correlationData.getFuture().addCallback(result -> {
+            // 判断结果
+            if (result.isAck()) {
+                // ACK
+                log.debug("消息成功投递到交换机！消息ID: {}", correlationData.getId());
+            } else {
+                // NACK
+                log.error("消息投递到交换机失败！消息ID：{}", correlationData.getId());
+                // 重发消息
+            }
+        }, ex -> {
+            // 记录日志
+            log.error("消息发送失败！", ex);
+            // 重发消息
+        });
+        // 3.发送消息
+        rabbitTemplate.convertAndSend("amq.topic", "a.simple.test", message, correlationData);
     }
 
-    /**
-     * Work Queue 工作队列模型
-     * @throws InterruptedException
-     */
     @Test
-    public void testSendMessage2WorkQueue() throws InterruptedException {
-        String queueName = "simple.queue";
-        String message = "hello, message__";
-        for (int i = 1; i <= 50; i++) {
-            rabbitTemplate.convertAndSend(queueName,message+i);
-            Thread.sleep(20);
+    public void testDurableMessage() {
+        Message build = MessageBuilder.withBody("chengwanli".getBytes(StandardCharsets.UTF_8)).setDeliveryMode(MessageDeliveryMode.PERSISTENT).build();
+
+
+        // 1.准备消息,开始持久化
+        Message message = MessageBuilder.withBody("hello, spring".getBytes(StandardCharsets.UTF_8))
+                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                .build();
+        // 2.发送消息
+        rabbitTemplate.convertAndSend("simple.queue", build);
+    }
+
+    @Test
+    public void testTTLMessage() {
+        // 1.准备消息
+        Message message = MessageBuilder
+                .withBody("hello, ttl messsage".getBytes(StandardCharsets.UTF_8))
+                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                .setExpiration("5000")
+                .build();
+        // 2.发送消息
+        rabbitTemplate.convertAndSend("ttl.direct", "ttl", message);
+        // 3.记录日志
+        log.info("消息已经成功发送！");
+    }
+
+    @Test
+    public void testSendDelayMessage() throws InterruptedException {
+        // 1.准备消息
+        Message message = MessageBuilder
+                .withBody("hello, ttl messsage".getBytes(StandardCharsets.UTF_8))
+                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                .setHeader("x-delay", 5000)
+                .build();
+        // 2.准备CorrelationData
+        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+        // 3.发送消息
+        rabbitTemplate.convertAndSend("delay.direct", "delay", message, correlationData);
+
+        log.info("发送消息成功");
+    }
+
+    @Test
+    public void testLazyQueue() throws InterruptedException {
+        long b = System.nanoTime();
+        for (int i = 0; i < 1000000; i++) {
+            // 1.准备消息
+            Message message = MessageBuilder
+                    .withBody("hello, Spring".getBytes(StandardCharsets.UTF_8))
+                    .setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT)
+                    .build();
+            // 2.发送消息
+            rabbitTemplate.convertAndSend("lazy.queue", message);
         }
+        long e = System.nanoTime();
+        System.out.println(e - b);
     }
-
-    /**
-     * todo Fanout Exchange 会将接收到的消息广播到每一个跟其绑定的queue
-     */
     @Test
-    public void testSendFanoutExchange() {
-        // 1 交换机名称
-        String exchangeName = "itcast.fanout";
-        // 2 消息
-        String message = "hello, every one! I'm oweson!";
-        // 3 发送消息
-        rabbitTemplate.convertAndSend(exchangeName, "", message);
-    }
-
-
-    /**
-     * Direct Exchange 会将接收到的消息根据规则路由到指定的Queue，因此称为路由模式（routes）
-     */
-    @Test
-    public void testSendDirectExchange() {
-        // 交换机名称
-        String exchangeName = "itcast.direct";
-        // 消息
-        String message = "hello, red!";
-        // 发送消息
-        rabbitTemplate.convertAndSend(exchangeName, "red", message);
-    }
-
-    /**
-     * 区别在于routingKey必须是多个单词的列表
-     * Queue与Exchange指定BindingKey时可以使用通配符
-     */
-    @Test
-    public void testSendTopicExchange() {
-        // 交换机名称
-        String exchangeName = "itcast.topic";
-        // 消息
-        String message = "今天天气不错，我的心情好极了!";
-        // 发送消息
-        rabbitTemplate.convertAndSend(exchangeName, "china.weather", message);
-    }
-
-    /**
-     * 区别在于routingKey必须是多个单词的列表
-     * Queue与Exchange指定BindingKey时可以使用通配符
-     */
-    @Test
-    public void testSendTopicExchange2() {
-        // 交换机名称
-        String exchangeName = "itcast.topic";
-        // 消息
-        String message = "今天天气不错，我的心情好极了!";
-        // 发送消息
-        rabbitTemplate.convertAndSend(exchangeName, "hi.news", message);
+    public void testNormalQueue() throws InterruptedException {
+        long b = System.nanoTime();
+        for (int i = 0; i < 1000000; i++) {
+            // 1.准备消息
+            Message message = MessageBuilder
+                    .withBody("hello, Spring".getBytes(StandardCharsets.UTF_8))
+                    .setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT)
+                    .build();
+            // 2.发送消息
+            rabbitTemplate.convertAndSend("normal.queue", message);
+        }
+        long e = System.nanoTime();
+        System.out.println(e - b);
     }
 }

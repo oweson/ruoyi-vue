@@ -9,6 +9,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.service.ISysNoticeService;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 公告 信息操作处理
@@ -63,8 +65,10 @@ public class SysNoticeController extends BaseController
     public AjaxResult add(@Validated @RequestBody SysNotice notice)
     {
         notice.setCreateBy(getUsername());
+        // 用于去除重复
         rabbitTemplate.convertAndSend(RabbitmqExchangeConstans.NOTICE_FANOUT,
-                "", JSON.toJSONString(notice));
+                "", JSON.toJSONString(notice),
+                new CorrelationData(UUID.randomUUID().toString().replace("-","")));
         return toAjax(noticeService.insertNotice(notice));
     }
 
