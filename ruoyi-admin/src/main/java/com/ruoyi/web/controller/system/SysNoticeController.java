@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.system;
 
 import com.alibaba.fastjson2.JSON;
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.annotation.RateLimiter;
 import com.ruoyi.common.constant.RabbitmqExchangeConstans;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -39,6 +40,7 @@ public class SysNoticeController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:notice:list')")
     @GetMapping("/list")
+    @RateLimiter(time = 10,count = 10)
     public TableDataInfo list(SysNotice notice)
     {
         startPage();
