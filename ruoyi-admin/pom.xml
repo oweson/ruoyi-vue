@@ -82,6 +82,20 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-test</artifactId>
+            <version>3.8.4</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- spring-boot-thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
 
     </dependencies>
 
