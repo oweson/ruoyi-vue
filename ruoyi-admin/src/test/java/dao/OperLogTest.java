@@ -1,6 +1,7 @@
 package dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.system.domain.SysNotice;
 import com.ruoyi.system.domain.SysOperLog;
 import com.ruoyi.system.mapper.SysNoticePlus;
@@ -41,9 +42,20 @@ public class OperLogTest extends App {
     @Test
     public void plusTest(){
 
-        List<SysNotice> sysNotices = sysNoticePlus.selectList(new QueryWrapper<>());
+       /* List<SysNotice> sysNotices = sysNoticePlus.selectList(new QueryWrapper<>());
 
-        System.out.println(sysNotices);
+        System.out.println(sysNotices);*/
+
+        Page<SysNotice> sysNoticePage = sysNoticePlus.selectPage(new Page<>(1, 10), new QueryWrapper<>());
+
+        sysNoticePage.getRecords().stream().forEach(x->{
+
+            x.setNoticeContent("fuck!!!");
+        });
+
+        System.out.println(sysNoticePage);
+
+        System.out.println(sysNoticePage);
 
 
     }

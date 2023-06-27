@@ -19,8 +19,7 @@ import java.util.List;
  * @date 2022-11-24
  */
 @Service
-public class SysCustomerServiceImpl implements ISysCustomerService
-{
+public class SysCustomerServiceImpl implements ISysCustomerService {
     @Autowired
     private SysCustomerMapper sysCustomerMapper;
 
@@ -31,8 +30,7 @@ public class SysCustomerServiceImpl implements ISysCustomerService
      * @return 客户
      */
     @Override
-    public SysCustomer selectSysCustomerByCustomerId(Long customerId)
-    {
+    public SysCustomer selectSysCustomerByCustomerId(Long customerId) {
         return sysCustomerMapper.selectSysCustomerByCustomerId(customerId);
     }
 
@@ -43,8 +41,7 @@ public class SysCustomerServiceImpl implements ISysCustomerService
      * @return 客户
      */
     @Override
-    public List<SysCustomer> selectSysCustomerList(SysCustomer sysCustomer)
-    {
+    public List<SysCustomer> selectSysCustomerList(SysCustomer sysCustomer) {
         return sysCustomerMapper.selectSysCustomerList(sysCustomer);
     }
 
@@ -54,10 +51,9 @@ public class SysCustomerServiceImpl implements ISysCustomerService
      * @param sysCustomer 客户
      * @return 结果
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public int insertSysCustomer(SysCustomer sysCustomer)
-    {
+    public int insertSysCustomer(SysCustomer sysCustomer) {
         int rows = sysCustomerMapper.insertSysCustomer(sysCustomer);
         insertSysGoods(sysCustomer);
         return rows;
@@ -71,8 +67,8 @@ public class SysCustomerServiceImpl implements ISysCustomerService
      */
     @Transactional
     @Override
-    public int updateSysCustomer(SysCustomer sysCustomer)
-    {
+    public int updateSysCustomer(SysCustomer sysCustomer) {
+        // 删除商品，插入商品，更新客户信息
         sysCustomerMapper.deleteSysGoodsByCustomerId(sysCustomer.getCustomerId());
         insertSysGoods(sysCustomer);
         return sysCustomerMapper.updateSysCustomer(sysCustomer);
@@ -86,8 +82,7 @@ public class SysCustomerServiceImpl implements ISysCustomerService
      */
     @Transactional
     @Override
-    public int deleteSysCustomerByCustomerIds(Long[] customerIds)
-    {
+    public int deleteSysCustomerByCustomerIds(Long[] customerIds) {
         sysCustomerMapper.deleteSysGoodsByCustomerIds(customerIds);
         return sysCustomerMapper.deleteSysCustomerByCustomerIds(customerIds);
     }
@@ -100,8 +95,7 @@ public class SysCustomerServiceImpl implements ISysCustomerService
      */
     @Transactional
     @Override
-    public int deleteSysCustomerByCustomerId(Long customerId)
-    {
+    public int deleteSysCustomerByCustomerId(Long customerId) {
         sysCustomerMapper.deleteSysGoodsByCustomerId(customerId);
         return sysCustomerMapper.deleteSysCustomerByCustomerId(customerId);
     }
@@ -111,20 +105,16 @@ public class SysCustomerServiceImpl implements ISysCustomerService
      *
      * @param sysCustomer 客户对象
      */
-    public void insertSysGoods(SysCustomer sysCustomer)
-    {
+    private void insertSysGoods(SysCustomer sysCustomer) {
         List<SysGoods> sysGoodsList = sysCustomer.getSysGoodsList();
         Long customerId = sysCustomer.getCustomerId();
-        if (StringUtils.isNotNull(sysGoodsList))
-        {
+        if (StringUtils.isNotNull(sysGoodsList)) {
             List<SysGoods> list = new ArrayList<SysGoods>();
-            for (SysGoods sysGoods : sysGoodsList)
-            {
+            for (SysGoods sysGoods : sysGoodsList) {
                 sysGoods.setCustomerId(customerId);
                 list.add(sysGoods);
             }
-            if (list.size() > 0)
-            {
+            if (list.size() > 0) {
                 sysCustomerMapper.batchSysGoods(list);
             }
         }

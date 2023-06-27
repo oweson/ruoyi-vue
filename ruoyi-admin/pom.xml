@@ -85,7 +85,7 @@
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-test</artifactId>
-            <version>3.8.4</version>
+            <version>3.8.5</version>
             <scope>test</scope>
         </dependency>
 
@@ -94,6 +94,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-system</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-system</artifactId>
+            <scope>test</scope>
         </dependency>
 
 
